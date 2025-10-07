@@ -47,7 +47,7 @@ public class AuthorizationController {
     private final RoleRepository roleRepository;
     private final PasswordEncoder encoder;
     private final RefreshTokenService refreshTokenService;
-    private JwtUtils jwtUtils = new JwtUtils();
+    private final JwtUtils jwtUtils;
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody SignInRequestDto loginRequestDto) {

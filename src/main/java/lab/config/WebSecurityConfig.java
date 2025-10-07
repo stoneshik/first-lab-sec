@@ -17,6 +17,8 @@ import org.springframework.security.web.header.writers.XXssProtectionHeaderWrite
 
 import lab.security.jwt.AuthEntryPointJwt;
 import lab.security.jwt.AuthTokenFilter;
+import lab.security.jwt.JwtUtils;
+import lab.security.services.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -25,10 +27,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
     private final AuthEntryPointJwt unauthorizedHandler;
+    private final JwtUtils jwtUtils;
+    private final UserDetailsServiceImpl userDetailsService;
 
     @Bean
     AuthTokenFilter authenticationJwtTokenFilter() {
-        return new AuthTokenFilter();
+        return new AuthTokenFilter(jwtUtils, userDetailsService);
     }
 
     @Bean
@@ -58,13 +62,13 @@ public class WebSecurityConfig {
                 .requestMatchers("/auth/**").permitAll()
                 .anyRequest().authenticated()
             )
-            .headers(
+            /*.headers(
                 headers -> headers.xssProtection(
                     xss -> xss.headerValue(XXssProtectionHeaderWriter.HeaderValue.ENABLED_MODE_BLOCK)
                 ).contentSecurityPolicy(
                     cps -> cps.policyDirectives("script-src 'self'")
                 )
-            );
+            )*/;
         http.addFilterBefore(
             authenticationJwtTokenFilter(),
             UsernamePasswordAuthenticationFilter.class

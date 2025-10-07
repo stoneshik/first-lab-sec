@@ -4,12 +4,12 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lab.exceptions.TokenRefreshException;
 import lab.security.bd.entities.RefreshToken;
+import lab.security.jwt.TokenProperties;
 import lab.security.repositories.RefreshTokenRepository;
 import lab.security.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +17,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class RefreshTokenService {
-    @Value("${token.refresh_time}")
-    private Long refreshTokenDurationMs;
+    private final TokenProperties tokenProperties;
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserRepository userRepository;
 
@@ -29,7 +28,7 @@ public class RefreshTokenService {
     public RefreshToken createRefreshToken(Long userId) {
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setUser(userRepository.findById(userId).get());
-        refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
+        refreshToken.setExpiryDate(Instant.now().plusMillis(tokenProperties.getExpireTime()));
         refreshToken.setToken(UUID.randomUUID().toString());
         refreshToken = refreshTokenRepository.save(refreshToken);
         return refreshToken;
