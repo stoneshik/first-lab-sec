@@ -16,6 +16,6 @@ public class UserController {
 
     @GetMapping("/data")
     public ResponseEntity<?> loadAllUsers() {
-        return ResponseEntity.ok(new Object());
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 }

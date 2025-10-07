@@ -11,7 +11,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,7 +38,6 @@ import lab.security.repositories.UserRepository;
 import lab.security.services.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 
-@CrossOrigin(origins = "${cors.urls}")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
@@ -49,7 +47,7 @@ public class AuthorizationController {
     private final RoleRepository roleRepository;
     private final PasswordEncoder encoder;
     private final RefreshTokenService refreshTokenService;
-    private final JwtUtils jwtUtils;
+    private JwtUtils jwtUtils = new JwtUtils();
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody SignInRequestDto loginRequestDto) {
