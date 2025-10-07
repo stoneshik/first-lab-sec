@@ -1,0 +1,68 @@
+name: CI with SAST & SCA
+
+on:
+  push:
+    branches:
+      - main
+      - 'feature/**'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build and Analyze
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Set up JDK
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # 3. Cache Maven dependencies
+      - name: Cache Maven
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: maven-
+
+      # 4. Build project (skip tests for speed)
+      - name: Build with Maven
+        run: mvn clean install -DskipTests
+
+      # 5. Run SpotBugs (SAST) with GitHub Annotations
+      - name: SpotBugs Analysis
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: target/spotbugs.sarif
+        continue-on-error: true
+
+      - name: Run SpotBugs Maven Plugin
+        run: mvn com.github.spotbugs:spotbugs-maven-plugin:4.7.3:spotbugs \
+              -Dspotbugs.sarifOutput=target/spotbugs.sarif
+
+      # 6. Run OWASP Dependency-Check (SCA)
+      - name: Run OWASP Dependency-Check
+        run: mvn org.owasp:dependency-check-maven:8.3.1:aggregate \
+              -Dformat=HTML \
+              -DoutputDirectory=target/dependency-check-report
+
+      # 7. Upload Dependency-Check report as artifact
+      - name: Upload Dependency-Check report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: dependency-check-report
+          path: target/dependency-check-report/dependency-check-report.html
+
+      # 8. Optional: Run tests
+      - name: Run Tests
+        run: mvn test
