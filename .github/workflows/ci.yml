@@ -38,24 +38,26 @@ jobs:
       - name: Build with Maven
         run: mvn clean install -DskipTests
 
-      # 5. Run SpotBugs (SAST) with GitHub Annotations
-      - name: SpotBugs Analysis
+      # 5. Run SpotBugs (SAST)
+      - name: Run SpotBugs
+        run: mvn com.github.spotbugs:spotbugs-maven-plugin:4.7.2:spotbugs \
+            -Dspotbugs.sarifOutput=target/spotbugs.sarif
+
+      # 6. Upload SARIF report for GitHub Annotations
+      - name: Upload SpotBugs SARIF Report
         uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: target/spotbugs.sarif
         continue-on-error: true
 
-      - name: Run SpotBugs Maven Plugin
-        run: mvn com.github.spotbugs:spotbugs-maven-plugin:4.8.1:spotbugs \
-          -Dspotbugs.sarifOutput=target/spotbugs.sarif
 
-      # 6. Run OWASP Dependency-Check (SCA)
+      # 7. Run OWASP Dependency-Check (SCA)
       - name: Run OWASP Dependency-Check
         run: mvn org.owasp:dependency-check-maven:8.3.1:aggregate \
               -Dformat=HTML \
               -DoutputDirectory=target/dependency-check-report
 
-      # 7. Upload Dependency-Check report as artifact
+      # 8. Upload Dependency-Check report as artifact
       - name: Upload Dependency-Check report
         if: always()
         uses: actions/upload-artifact@v4
@@ -63,6 +65,6 @@ jobs:
           name: dependency-check-report
           path: target/dependency-check-report/dependency-check-report.html
 
-      # 8. Optional: Run tests
+      # 9. Optional: Run tests
       - name: Run Tests
         run: mvn test
