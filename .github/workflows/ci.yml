@@ -53,8 +53,13 @@ jobs:
       # 7. Run OWASP Dependency-Check (SCA)
       - name: Run OWASP Dependency-Check
         run: mvn org.owasp:dependency-check-maven:8.3.1:aggregate \
-              -Dformat=HTML \
-              -DoutputDirectory=target/dependency-check-report
+            -Dformat=HTML \
+            -DoutputDirectory=target/dependency-check-report \
+            -DupdateOnly=false \
+            -Dnvd.skip=false \
+            -Dnvd.check.unofficial=false \
+            -Dnvd.cveUrlBase=https://nvd.nist.gov/feeds/json/cve/1.1/ \
+            -Dnvd.userAgent="GitHub Actions Dependency-Check"
 
       # 8. Upload Dependency-Check report as artifact
       - name: Upload Dependency-Check report
