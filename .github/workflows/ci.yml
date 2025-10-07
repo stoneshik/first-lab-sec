@@ -40,7 +40,7 @@ jobs:
 
       # 5. Run SpotBugs (SAST)
       - name: Run SpotBugs
-        run: mvn com.github.spotbugs:spotbugs-maven-plugin:4.7.2:spotbugs \
+        run: mvn com.github.spotbugs:spotbugs-maven-plugin:4.7.3.6:spotbugs \
             -Dspotbugs.sarifOutput=target/spotbugs.sarif
 
       # 6. Upload SARIF report for GitHub Annotations
@@ -49,7 +49,6 @@ jobs:
         with:
           sarif_file: target/spotbugs.sarif
         continue-on-error: true
-
 
       # 7. Run OWASP Dependency-Check (SCA)
       - name: Run OWASP Dependency-Check
