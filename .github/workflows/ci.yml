@@ -46,8 +46,8 @@ jobs:
         continue-on-error: true
 
       - name: Run SpotBugs Maven Plugin
-        run: mvn com.github.spotbugs:spotbugs-maven-plugin:4.7.3:spotbugs \
-              -Dspotbugs.sarifOutput=target/spotbugs.sarif
+        run: mvn com.github.spotbugs:spotbugs-maven-plugin:4.8.1:spotbugs \
+          -Dspotbugs.sarifOutput=target/spotbugs.sarif
 
       # 6. Run OWASP Dependency-Check (SCA)
       - name: Run OWASP Dependency-Check
