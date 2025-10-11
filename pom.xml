@@ -93,10 +93,11 @@
                 <artifactId>spotbugs-maven-plugin</artifactId>
                 <version>4.7.3.6</version>
                 <configuration>
-                    <outputFormats>
-                    <outputFormat>SARIF</outputFormat>
-                    </outputFormats>
+                    <!-- создаёт SARIF по указанному пути -->
                     <sarifOutput>${project.build.directory}/spotbugs.sarif</sarifOutput>
+                    <!-- можно включить xmlOutput, чтобы иметь XML + SARIF -->
+                    <xmlOutput>true</xmlOutput>
+                    <xmlOutputDirectory>${project.build.directory}</xmlOutputDirectory>
                 </configuration>
                 <executions>
                     <execution>
@@ -111,6 +112,13 @@
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
                 <version>12.1.0</version>
+                <configuration>
+                    <!-- если хотите, чтобы build не падал из-за временной недоступности NVD -->
+                    <failOnError>false</failOnError>
+                    <!-- output -->
+                    <format>HTML</format>
+                    <outputDirectory>${project.build.directory}/dependency-check-report</outputDirectory>
+                </configuration>
             </plugin>
         </plugins>
     </build>
