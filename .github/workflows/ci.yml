@@ -41,7 +41,6 @@ jobs:
       - name: Run SpotBugs (via lifecycle)
         run: mvn verify -DskipTests
 
-
       # 6. Upload SpotBugs SARIF Report
       - name: Upload SpotBugs SARIF Report
         uses: github/codeql-action/upload-sarif@v2
@@ -49,21 +48,22 @@ jobs:
           sarif_file: target/spotbugs.sarif
         continue-on-error: true
 
-      # 7. Cache Dependency-Check data
+      # cache for dependency-check DB
       - name: Cache Dependency-Check Data
         uses: actions/cache@v4
         with:
           path: ~/.dependency-check-data
-          key: dependency-check-${{ runner.os }}-${{ hashFiles('pom.xml') }}
+          key: dependency-check-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: dependency-check-${{ runner.os }}-
 
-      # 8. Run OWASP Dependency-Check
+      # run dependency-check (updated plugin version)
       - name: Run OWASP Dependency-Check
-        run: mvn org.owasp:dependency-check-maven:8.3.1:aggregate \
-             -Dformat=HTML \
-             -DoutputDirectory=target/dependency-check-report \
-             -DdataDirectory=~/.dependency-check-data \
-             -Dnvd.userAgent="GitHub Actions Dependency-Check" \
-             -DupdateOnly=false
+        run: mvn org.owasp:dependency-check-maven:12.1.0:aggregate \
+            -Dformat=HTML \
+            -DoutputDirectory=target/dependency-check-report \
+            -DdataDirectory=${{ runner.home }}/.dependency-check-data \
+            -Dnvd.userAgent="GitHub Actions Dependency-Check" \
+            -DupdateOnly=false
 
       # 9. Debug: list target folder
       - name: List target directory
