@@ -38,9 +38,9 @@ jobs:
         run: mvn clean install -DskipTests
 
       # 5. Run SpotBugs (generate SARIF)
-      - name: Run SpotBugs
-        run: mvn com.github.spotbugs:spotbugs-maven-plugin:4.7.3.6:spotbugs \
-             -Dspotbugs.sarifOutput=target/spotbugs.sarif
+      - name: Run SpotBugs (via lifecycle)
+        run: mvn verify -DskipTests
+
 
       # 6. Upload SpotBugs SARIF Report
       - name: Upload SpotBugs SARIF Report

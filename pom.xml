@@ -92,12 +92,18 @@
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
                 <version>4.7.3.6</version>
+                <configuration>
+                    <outputFormats>
+                    <outputFormat>SARIF</outputFormat>
+                    </outputFormats>
+                    <sarifOutput>${project.build.directory}/spotbugs.sarif</sarifOutput>
+                </configuration>
                 <executions>
                     <execution>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>spotbugs</goal>
-                        </goals>
+                    <phase>verify</phase>
+                    <goals>
+                        <goal>spotbugs</goal>
+                    </goals>
                     </execution>
                 </executions>
             </plugin>
